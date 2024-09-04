@@ -10,17 +10,24 @@ import {
   ColumnFiltersState,
   VisibilityState,
   getPaginationRowModel,
-} from '@tanstack/react-table';
+} from "@tanstack/react-table";
 import cryptoStore from "../store/CryptoStore";
 import Table from "./Table";
+import { Link } from "react-router-dom";
 
 const CryptoList: React.FC = observer(() => {
   const [sorting, setSorting] = React.useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
+    []
+  );
+  const [columnVisibility, setColumnVisibility] =
+    React.useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = React.useState({});
-  const [globalFilter, setGlobalFilter] = React.useState('');
-  const [pagination, setPagination] = React.useState({ pageIndex: 0, pageSize: 10 });
+  const [globalFilter, setGlobalFilter] = React.useState("");
+  const [pagination, setPagination] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
 
   useEffect(() => {
     cryptoStore.fetchCryptoRates();
@@ -31,24 +38,27 @@ const CryptoList: React.FC = observer(() => {
     () => [
       {
         accessorFn: (row: any) => `${row.baseCurrency}/${row.quoteCurrency}`, // Custom accessor for combined currency
-        id: 'currencyPair',
-        header: 'Currency Pair',
+        id: "currencyPair",
+        header: "Currency Pair",
+        cell: ({ getValue }: any) => (
+          <Link to={`/${getValue().toLowerCase()}`}>{getValue()}</Link>
+        ),
       },
       {
-        accessorKey: 'rate',
-        header: 'Rate',
+        accessorKey: "rate",
+        header: "Rate",
       },
       {
-        accessorKey: 'ask',
-        header: 'Ask',
+        accessorKey: "ask",
+        header: "Ask",
       },
       {
-        accessorKey: 'bid',
-        header: 'Bid',
+        accessorKey: "bid",
+        header: "Bid",
       },
       {
-        accessorKey: 'diff24h',
-        header: '24h Diff',
+        accessorKey: "diff24h",
+        header: "24h Diff",
       },
     ],
     []
@@ -73,10 +83,12 @@ const CryptoList: React.FC = observer(() => {
       globalFilter,
       pagination,
     },
-    globalFilterFn: 'includesString',
+    globalFilterFn: "includesString",
   });
 
-  const handlePageSizeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handlePageSizeChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     setPagination((prev) => ({
       ...prev,
       pageSize: Number(event.target.value),
@@ -99,8 +111,8 @@ const CryptoList: React.FC = observer(() => {
         <input
           type="text"
           placeholder="Search..."
-          value={globalFilter ?? ''}
-          onChange={e => setGlobalFilter(e.target.value)}
+          value={globalFilter ?? ""}
+          onChange={(e) => setGlobalFilter(e.target.value)}
           style={{ marginBottom: "10px", padding: "5px", width: "100%" }}
         />
       </div>
@@ -114,7 +126,11 @@ const CryptoList: React.FC = observer(() => {
       <div className="tableFooter">
         <div>
           <label htmlFor="pageSize">Rows per page:</label>
-          <select id="pageSize" value={pagination.pageSize} onChange={handlePageSizeChange}>
+          <select
+            id="pageSize"
+            value={pagination.pageSize}
+            onChange={handlePageSizeChange}
+          >
             <option value={5}>5</option>
             <option value={10}>10</option>
             <option value={20}>20</option>
@@ -126,28 +142,43 @@ const CryptoList: React.FC = observer(() => {
             onClick={() => setPagination((prev) => ({ ...prev, pageIndex: 0 }))}
             disabled={pagination.pageIndex === 0}
           >
-            {'<<'}
+            {"<<"}
           </button>
           <button
-            onClick={() => setPagination((prev) => ({ ...prev, pageIndex: prev.pageIndex - 1 }))}
+            onClick={() =>
+              setPagination((prev) => ({
+                ...prev,
+                pageIndex: prev.pageIndex - 1,
+              }))
+            }
             disabled={pagination.pageIndex === 0}
           >
-            {'<'}
+            {"<"}
           </button>
           <span>
             Page {pagination.pageIndex + 1} of {table.getPageCount()}
           </span>
           <button
-            onClick={() => setPagination((prev) => ({ ...prev, pageIndex: prev.pageIndex + 1 }))}
+            onClick={() =>
+              setPagination((prev) => ({
+                ...prev,
+                pageIndex: prev.pageIndex + 1,
+              }))
+            }
             disabled={pagination.pageIndex >= table.getPageCount() - 1}
           >
-            {'>'}
+            {">"}
           </button>
           <button
-            onClick={() => setPagination((prev) => ({ ...prev, pageIndex: table.getPageCount() - 1 }))}
+            onClick={() =>
+              setPagination((prev) => ({
+                ...prev,
+                pageIndex: table.getPageCount() - 1,
+              }))
+            }
             disabled={pagination.pageIndex >= table.getPageCount() - 1}
           >
-            {'>>'}
+            {">>"}
           </button>
         </div>
       </div>

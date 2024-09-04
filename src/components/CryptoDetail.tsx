@@ -1,6 +1,6 @@
 // src/components/CryptoDetail.tsx
 import React from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
 import cryptoStore from "../store/CryptoStore";
 
@@ -28,6 +28,8 @@ const CryptoDetail: React.FC = observer(() => {
       <p>Ask: {crypto.ask}</p>
       <p>Bid: {crypto.bid}</p>
       <p>24h Diff: {crypto.diff24h}</p>
+
+      <Link to="/">Back List...</Link>
     </div>
   );
 });
